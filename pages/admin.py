@@ -90,7 +90,8 @@ def render_admin_dashboard():
     # --- Chart 1: AI Familiarity by Department (Bar Chart) ---
     with col1:
         st.subheader("AI Familiarity Across Departments")
-        dept_avg = df.groupby('department', as_index=False)['ai_familiarity'].mean()
+        dept_avg = df.groupby('department', as_index=False)['ai_comfort_level'].mean()
+   
         
         fig_bar = px.bar(
             dept_avg, 
