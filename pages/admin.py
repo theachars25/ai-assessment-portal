@@ -87,18 +87,18 @@ def render_admin_dashboard():
     # Layout for Charts
     col1, col2 = st.columns(2)
     
-    # --- Chart 1: AI Familiarity by Department (Bar Chart) ---
+    # --- Chart 1: AI Comfort by Department (Bar Chart) ---
     with col1:
-        st.subheader("AI Familiarity Across Departments")
+        st.subheader("AI Comfort Across Departments")
         dept_avg = df.groupby('department', as_index=False)['ai_comfort_level'].mean()
    
-        
+        # Fixed: Mapped 'y' and labels to use 'ai_comfort_level'
         fig_bar = px.bar(
             dept_avg, 
             x='department', 
-            y='ai_familiarity', 
+            y='ai_comfort_level', 
             color='department',
-            labels={'department': 'Department', 'ai_familiarity': 'Avg Familiarity (1-5)'},
+            labels={'department': 'Department', 'ai_comfort_level': 'Avg Comfort Level (1-5)'},
             text_auto='.1f'
         )
         fig_bar.update_yaxes(range=[0, 5])
@@ -110,7 +110,8 @@ def render_admin_dashboard():
         st.subheader("Time Sink Heatmap")
         st.caption("Most frequent bottleneck keywords by department.")
         
-        heatmap_data = extract_top_keywords(df, 'time_consuming_tasks', top_n=12)
+        # Fixed: Updated column target from 'time_consuming_tasks' to 'time_sinks'
+        heatmap_data = extract_top_keywords(df, 'time_sinks', top_n=12)
         
         if not heatmap_data.empty:
             fig_heat = px.density_heatmap(
@@ -131,14 +132,14 @@ def render_admin_dashboard():
     
     # Extract and format the qualitative data
     if not df.empty:
-        # Assuming the dashboard is viewing a single company's data
         company_name = df['company_name'].iloc[0] 
         
-        # Combine the time_consuming_tasks into a single text block, labeled by department
+        # Combine the time_sinks into a single text block, labeled by department
         feedback_texts = []
         for _, row in df.iterrows():
             dept = row['department']
-            task = row['time_consuming_tasks']
+            # Fixed: Updated from 'time_consuming_tasks' to 'time_sinks'
+            task = row['time_sinks']
             if pd.notna(task) and str(task).strip():
                 feedback_texts.append(f"- [{dept}]: {task}")
         
@@ -169,7 +170,6 @@ def render_admin_dashboard():
             with st.expander("Preview Report", expanded=True):
                 st.markdown(st.session_state['generated_report'])
                 
-            # Streamlit's native download button makes file export trivial
             st.download_button(
                 label="📥 Download Report (.md)",
                 data=st.session_state['generated_report'],
